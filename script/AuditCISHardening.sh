@@ -1,4 +1,6 @@
 #!/bin/bash
+# CIS Hardening audit Script - for rhel and debian
+# Author: Behnam0x
 # Detect OS family
 OS_ID=$(grep '^ID=' /etc/os-release | cut -d= -f2 | tr -d '"')
 OS_LIKE=$(grep '^ID_LIKE=' /etc/os-release | cut -d= -f2 | tr -d '"')
@@ -740,7 +742,7 @@ fi
 # ANSI color codes
 GREEN='\033[0;32m'
 RED='\033[0;31m'
-NC='\033[0m' # No Color
+NC='\033[0m' 
 
 echo -e "${GREEN}✅ Passed: $PASS_COUNT ($PASS_PERCENT%)${NC}" | tee -a "$RESULT_FILE"
 echo -e "${RED}❌ Failed: $FAIL_COUNT ($FAIL_PERCENT%)${NC}" | tee -a "$RESULT_FILE"
