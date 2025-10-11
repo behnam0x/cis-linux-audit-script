@@ -25,10 +25,11 @@ The CIS Benchmarks are best-practice security configuration guides developed by 
 Distribution	Version(s)
 RHEL	7, 8, 9
 CentOS	7, 8
+Oracle Linux 8, 9
 Rocky Linux	8, 9
 AlmaLinux	8, 9
 Debian	10, 11
-Ubuntu	18.04, 20.04, 22.04
+Ubuntu	18.04, 20.04, 22.04, 24.04
 🛠️ How to Use
 
 <pre lang="markdown">
