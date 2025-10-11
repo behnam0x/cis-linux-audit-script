@@ -5,13 +5,14 @@
 OS_ID=$(grep '^ID=' /etc/os-release | cut -d= -f2 | tr -d '"')
 OS_LIKE=$(grep '^ID_LIKE=' /etc/os-release | cut -d= -f2 | tr -d '"')
 
-if [[ "$OS_LIKE" == *rhel* || "$OS_ID" == "rhel" || "$OS_ID" == "ol" || "$OS_ID" == "centos" ]]; then
+if [[ "$OS_LIKE" == *rhel* || "$OS_ID" == "rhel" || "$OS_ID" == "centos" || "$OS_ID" == "rocky" || "$OS_ID" == "almalinux" || "$OS_ID" == "ol" ]]; then
   OS_FAMILY="rhel"
 elif [[ "$OS_LIKE" == *debian* || "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
   OS_FAMILY="debian"
 else
   OS_FAMILY="unknown"
 fi
+
 
 echo "🧭 Detected OS family: $OS_FAMILY" | tee -a "$RESULT_FILE"
 
