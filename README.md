@@ -70,7 +70,7 @@ Each check is mapped to its corresponding CIS control ID (e.g., 1.1.1, 5.2.3) fo
 📚 References
 
 [CIS Benchmark](https://www.cisecurity.org/cis-benchmarks/)
-[RHEL Security Guide](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10)
+[RHEL Security Guide](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10#Security)
 
 🤝 Contributing
 Pull requests are welcome! If you want to add new checks, improve compatibility, or enhance reporting, feel free to contribute.
