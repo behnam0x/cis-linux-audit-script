@@ -22,14 +22,17 @@ The CIS Benchmarks are best-practice security configuration guides developed by 
     🔄 Supports dry-run and fix modes
 
 📦 Supported Platforms
+<pre lang="markdown">
 Distribution	Version(s)
 RHEL	7, 8, 9
 CentOS	7, 8
 Oracle Linux 8, 9
 Rocky Linux	8, 9
 AlmaLinux	8, 9
-Debian	10, 11
+Debian	9, 10, 11
 Ubuntu	18.04, 20.04, 22.04, 24.04
+</pre>
+
 🛠️ How to Use
 
 <pre lang="markdown">
