@@ -5,14 +5,13 @@
 OS_ID=$(grep '^ID=' /etc/os-release | cut -d= -f2 | tr -d '"')
 OS_LIKE=$(grep '^ID_LIKE=' /etc/os-release | cut -d= -f2 | tr -d '"')
 
-if [[ "$OS_LIKE" == *rhel* || "$OS_ID" == "rhel" || "$OS_ID" == "centos" || "$OS_ID" == "rocky" || "$OS_ID" == "almalinux" || "$OS_ID" == "ol" ]]; then
+if [[ "$OS_LIKE" == *rhel* || "$OS_ID" == "rhel" || "$OS_ID" == "ol" || "$OS_ID" == "centos" ]]; then
   OS_FAMILY="rhel"
 elif [[ "$OS_LIKE" == *debian* || "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
   OS_FAMILY="debian"
 else
   OS_FAMILY="unknown"
 fi
-
 
 echo "🧭 Detected OS family: $OS_FAMILY" | tee -a "$RESULT_FILE"
 
@@ -112,7 +111,11 @@ check_item "1.4.2 GRUB config permissions ≤ 600" "[ $(stat -c '%a' /boot/grub/
 start_section "1.5 - Kernel Hardening"
 check_item "1.5.1 ASLR enabled" "sysctl kernel.randomize_va_space | grep -q '2'"
 check_item "1.5.2 ptrace restricted" "sysctl kernel.yama.ptrace_scope | grep -q '1'"
-check_item "1.5.3 core dumps disabled" "sysctl fs.suid_dumpable | grep -q '0'"
+
+check_item "1.5.3.1 fs.suid_dumpable = 0" "sysctl fs.suid_dumpable | grep -q 'fs.suid_dumpable = 0'"
+check_item "1.5.3.2 kernel.core_pattern = |/bin/false" "sysctl kernel.core_pattern | grep -q '|/bin/false'"
+check_item "1.5.3.3 limits.conf disables core dumps" "grep -Eq '^\* (hard|soft) core 0' /etc/security/limits.conf"
+
 check_item "1.5.4 Ensure prelink is not installed" "! check_package_installed prelink"
 
 if [ "$OS_FAMILY" = "debian" ]; then
@@ -123,36 +126,68 @@ elif [ "$OS_FAMILY" = "rhel" ]; then
   check_item "1.5.5 Ensure ABRT GUI is removed" "! check_package_installed abrt-gui"
 fi
 
+if [ "$OS_FAMILY" = "rhel" ]; then
+  start_section "1.6 - Configure System-Wide Crypto Policy"
 
-start_section "1.6 - Login Banners"
+  check_item "1.6.1 crypto policy is set to FUTURE" \
+    "[ \"$(update-crypto-policies --show)\" = \"FUTURE\" ]"
+
+  check_item "1.6.2 sshd_config does not override crypto policy" \
+    "! grep -Ei '^(Ciphers|MACs|KexAlgorithms)' /etc/ssh/sshd_config"
+
+  check_item "1.6.3 SHA1 hash/signature support disabled" \
+    "grep -q 'SHA1' /etc/crypto-policies/back-ends/openssh.config && false || true"
+
+  check_item "1.6.4 MACs <128 bits disabled" \
+    "grep -Eq 'umac-64@openssh.com|hmac-md5' /etc/crypto-policies/back-ends/openssh.config && false || true"
+
+  check_item "1.6.5 CBC ciphers disabled" \
+    "grep -Eq 'cbc' /etc/crypto-policies/back-ends/openssh.config && false || true"
+
+  check_item "1.6.6 chacha20-poly1305 disabled" \
+    "grep -q 'chacha20-poly1305@openssh.com' /etc/crypto-policies/back-ends/openssh.config && false || true"
+
+  check_item "1.6.7 EtM MACs disabled" \
+    "grep -Eq 'hmac-sha2-(256|512)-etm@openssh.com' /etc/crypto-policies/back-ends/openssh.config && false || true"
+fi
+
+
+if [ "$OS_FAMILY" = "rhel" ]; then
+  SECTION_LOGIN_BANNER="1.7"
+  SECTION_GRAPHICAL="1.8"
+elif [ "$OS_FAMILY" = "debian" ]; then
+  SECTION_LOGIN_BANNER="1.6"
+  SECTION_GRAPHICAL="1.7"
+else
+  SECTION_LOGIN_BANNER="unknown"
+  SECTION_GRAPHICAL="unknown"
+fi
+
+start_section "$SECTION_LOGIN_BANNER - Login Banners"
 for file in /etc/motd /etc/issue /etc/issue.net; do
-  check_item "1.6.1 $file contains banner" "grep -q 'Authorized Access Only' $file"
-  check_item "1.6.2 $file permissions = 644" "[ $(stat -c '%a' $file) -eq 644 ]"
-  check_item "1.6.4 $file owned by root" "stat -c '%U:%G' $file | grep -q 'root:root'"
+  check_item "$SECTION_LOGIN_BANNER.1 $file contains banner" "grep -q 'Authorized Access Only' $file"
+  check_item "$SECTION_LOGIN_BANNER.2 $file permissions = 644" "[ $(stat -c '%a' $file) -eq 644 ]"
+  check_item "$SECTION_LOGIN_BANNER.4 $file owned by root" "stat -c '%U:%G' $file | grep -q 'root:root'"
 done
 
-start_section "1.7 - Graphical Packages Not Installed"
+start_section "$SECTION_GRAPHICAL - Graphical Packages Not Installed"
 
 if [ "$OS_FAMILY" = "debian" ]; then
-  for pkg in \
-    gdm3 ubuntu-desktop gnome-shell kde-plasma-desktop xfce4 \
-    x11-common x11-utils x11-xserver-utils \
-    libwayland-client0 libwayland-server0 \
-    xterm gnome-terminal \
-    fonts-dejavu fonts-freefont-ttf \
-    gnome-themes-standard gnome-icon-theme; do
-
-    check_item "1.7 $pkg not installed" "! check_package_installed $pkg"
+  for pkg in gdm3 ubuntu-desktop gnome-shell kde-plasma-desktop xfce4 \
+             x11-common x11-utils x11-xserver-utils \
+             libwayland-client0 libwayland-server0 \
+             xterm gnome-terminal \
+             fonts-dejavu fonts-freefont-ttf \
+             gnome-themes-standard gnome-icon-theme; do
+    check_item "$SECTION_GRAPHICAL $pkg not installed" "! check_package_installed $pkg"
   done
 
 elif [ "$OS_FAMILY" = "rhel" ]; then
-  for pkg in \
-    gdm gnome-desktop gnome-shell kde-workspace plasma-desktop xfce4 \
-    xorg-x11-server-Xorg xorg-x11-utils xorg-x11-xinit \
-    wayland xterm gnome-terminal \
-    dejavu-fonts-common gnome-themes-standard gnome-icon-theme; do
-
-    check_item "1.7 $pkg not installed" "! check_package_installed $pkg"
+  for pkg in gdm gnome-desktop gnome-shell kde-workspace plasma-desktop xfce4 \
+             xorg-x11-server-Xorg xorg-x11-utils xorg-x11-xinit \
+             wayland xterm gnome-terminal \
+             dejavu-fonts-common gnome-themes-standard gnome-icon-theme; do
+    check_item "$SECTION_GRAPHICAL $pkg not installed" "! check_package_installed $pkg"
   done
 
 else
@@ -743,10 +778,9 @@ fi
 # ANSI color codes
 GREEN='\033[0;32m'
 RED='\033[0;31m'
-NC='\033[0m' 
+NC='\033[0m' # No Color
 
 echo -e "${GREEN}✅ Passed: $PASS_COUNT ($PASS_PERCENT%)${NC}" | tee -a "$RESULT_FILE"
 echo -e "${RED}❌ Failed: $FAIL_COUNT ($FAIL_PERCENT%)${NC}" | tee -a "$RESULT_FILE"
 echo -e "📋 Total Checks: $TOTAL" | tee -a "$RESULT_FILE"
 echo -e "\n📁 Full audit log saved to: $RESULT_FILE"
-
