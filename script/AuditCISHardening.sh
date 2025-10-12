@@ -1,12 +1,12 @@
 #!/bin/bash
 # CIS Hardening audit Script - for rhel and debian
 # Author: Behnam0x
+
 # Detect OS family
 OS_ID=$(grep '^ID=' /etc/os-release | cut -d= -f2 | tr -d '"')
 OS_LIKE=$(grep '^ID_LIKE=' /etc/os-release | cut -d= -f2 | tr -d '"')
 
-if [[ "$OS_LIKE" == *rhel* || "$OS_ID" == "rhel" || "$OS_ID" == "centos" || "$OS_ID" == "rocky" || "$OS_ID" == "almalinux" || "$OS_ID" == "ol" ]]; then
-if [[ "$OS_LIKE" == *rhel* || "$OS_ID" == "rhel" || "$OS_ID" == "ol" || "$OS_ID" == "centos" ]]; then
+if [[ "$OS_LIKE" == *rhel* || "$OS_ID" == "rhel" || "$OS_ID" == "ol" || "$OS_ID" == "centos" || "$OS_ID" == "rocky" || "$OS_ID" == "almalinux" ]]; then
   OS_FAMILY="rhel"
 elif [[ "$OS_LIKE" == *debian* || "$OS_ID" == "debian" || "$OS_ID" == "ubuntu" ]]; then
   OS_FAMILY="debian"
@@ -14,19 +14,23 @@ else
   OS_FAMILY="unknown"
 fi
 
-echo "🧭 Detected OS family: $OS_FAMILY" | tee -a "$RESULT_FILE"
-
+# Prepare logging
 LOG_DIR="/var/log/cis_audit"
 mkdir -p "$LOG_DIR"
 RESULT_FILE="$LOG_DIR/cis_audit_results.log"
 > "$RESULT_FILE"
 
+echo "🧭 Detected OS family: $OS_FAMILY" | tee -a "$RESULT_FILE"
+
+# Initialize counters
 PASS_COUNT=0
 FAIL_COUNT=0
 
+# Section header function
 start_section() {
   echo -e "\n🔹 $1" | tee -a "$RESULT_FILE"
 }
+
 
 check_item() {
   local description="$1"
@@ -104,10 +108,21 @@ fi
 
 
 
+if [ "$OS_FAMILY" = "rhel" ]; then
+  GRUB_CFG="/boot/grub2/grub.cfg"
+  GRUB_USER_CFG="/boot/grub2/user.cfg"
+else
+  GRUB_CFG="/boot/grub/grub.cfg"
+  GRUB_USER_CFG="/boot/grub/user.cfg"
+fi
+
 start_section "1.4 - Bootloader"
-check_item "1.4.1 GRUB password set" "grep -q 'password_pbkdf2' /boot/grub/grub.cfg"
-check_item "1.4.2 GRUB config owned by root" "stat -c '%U:%G' /boot/grub/grub.cfg | grep -q 'root:root'"
-check_item "1.4.2 GRUB config permissions ≤ 600" "[ $(stat -c '%a' /boot/grub/grub.cfg) -le 600 ]"
+
+check_item "1.4.1 GRUB password set" "[ -f $GRUB_USER_CFG ] && grep -q '^GRUB2_PASSWORD=' $GRUB_USER_CFG"
+check_item "1.4.2 GRUB config owned by root" "[ -f $GRUB_CFG ] && stat -c '%U:%G' $GRUB_CFG | grep -q 'root:root'"
+check_item "1.4.2 GRUB config permissions ≤ 600" "[ -f $GRUB_CFG ] && [ \$(stat -c '%a' $GRUB_CFG) -le 600 ]"
+
+
 
 start_section "1.5 - Kernel Hardening"
 check_item "1.5.1 ASLR enabled" "sysctl kernel.randomize_va_space | grep -q '2'"
@@ -599,10 +614,21 @@ else
   check_item "5.3.1.3 pam_pwhistory installed" "check_package_installed pam_pwhistory"
 fi
 
-# 5.3.2 Module presence
-check_item "5.3.2.1 pam_unix enabled" "grep -q 'pam_unix.so' $PAM_AUTH_FILE"
-check_item "5.3.2.2 pam_pwquality enabled" "grep -q 'pam_pwquality.so' $PAM_PASSWORD_FILE"
-check_item "5.3.2.3 pam_pwhistory enabled" "grep -q 'pam_pwhistory.so' $PAM_PASSWORD_FILE"
+if [ "$OS_FAMILY" = "rhel" ]; then
+  check_item "5.3.2.1 authselect profile includes pam modules" "authselect current | grep -Eq 'with-faillock|with-pwquality|with-pwhistory'"
+  check_item "5.3.2.2 pam_faillock enabled" "grep -q 'pam_faillock.so' $PAM_AUTH_FILE"
+  check_item "5.3.2.3 pam_pwquality enabled" "grep -q 'pam_pwquality.so' $PAM_PASSWORD_FILE"
+  check_item "5.3.2.4 pam_pwhistory enabled" "grep -q 'pam_pwhistory.so' $PAM_PASSWORD_FILE"
+  check_item "5.3.2.5 pam_unix enabled" "grep -q 'pam_unix.so' $PAM_AUTH_FILE"
+
+elif [ "$OS_FAMILY" = "debian" ]; then
+  check_item "5.3.2.1 pam_unix enabled" "grep -q 'pam_unix.so' $PAM_AUTH_FILE"
+  check_item "5.3.2.2 pam_faillock enabled" "grep -q 'pam_faillock.so' $PAM_AUTH_FILE"
+  check_item "5.3.2.3 pam_pwquality enabled" "grep -q 'pam_pwquality.so' $PAM_PASSWORD_FILE"
+  check_item "5.3.2.4 pam_pwhistory enabled" "grep -q 'pam_pwhistory.so' $PAM_PASSWORD_FILE"
+fi
+
+
 
 # 5.3.3 faillock (RHEL only)
 if [ "$OS_FAMILY" = "rhel" ]; then
@@ -615,7 +641,7 @@ else
 fi
 
 # 5.3.4 pwquality settings
-check_item "5.3.4.1 pwquality minlen configured" "grep -q 'minlen=' /etc/security/pwquality.conf"
+check_item "5.3.4.1 pwquality minlen configured" "[ -f /etc/security/pwquality.conf ] && grep -q 'minlen=' /etc/security/pwquality.conf"
 check_item "5.3.4.2 pwquality complexity configured" "grep -q 'dcredit=' /etc/security/pwquality.conf"
 check_item "5.3.4.3 pwquality consecutive configured" "grep -q 'maxrepeat=' /etc/security/pwquality.conf"
 check_item "5.3.4.4 pwquality sequential configured" "grep -q 'maxsequence=' /etc/security/pwquality.conf"
