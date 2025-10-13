@@ -847,8 +847,11 @@ check_item "7.2.5 No duplicate UIDs" "[[ -z $(cut -d: -f3 /etc/passwd | sort | u
 check_item "7.2.6 No duplicate GIDs" "[[ -z $(cut -d: -f3 /etc/group | sort | uniq -d) ]]"
 check_item "7.2.7 No duplicate usernames" "[[ -z $(cut -d: -f1 /etc/passwd | sort | uniq -d) ]]"
 check_item "7.2.8 No duplicate group names" "[[ -z $(cut -d: -f1 /etc/group | sort | uniq -d) ]]"
-check_item "7.2.9 Local user home directories exist" "awk -F: '($3 >= 1000 && $7 !~ /(nologin|false)/ && $1 != \"nobody\") {print $6}' /etc/passwd | while read dir; do [ -d \"$dir\" ] || exit 1; done"
+check_item "7.2.9 Local user home directories exist" \
+  "awk -F: '(\$3 >= 1000 && \$7 !~ /(nologin|false)/ && \$1 != \"nobody\") {print \$6}' /etc/passwd | while read dir; do [ -d \"\$dir\" ] || exit 1; done"
 check_item "7.2.10 Dot files access configured" "find /home -name '.*' -type f -perm /o+r | grep -q . && false || true"
+
+
 
 
 
