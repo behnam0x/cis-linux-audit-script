@@ -1,4 +1,4 @@
-🔐 CIS Linux Audit Script
+🔐 CIS Linux Audit Script *
 
 This repository contains a comprehensive script to perform a full CIS (Center for Internet Security) benchmark audit for RHEL-based and Debian-based Linux distributions. It automates the process of checking system compliance with CIS security standards, helping system administrators and security professionals harden their systems effectively.
 📋 What Is CIS Benchmark?
