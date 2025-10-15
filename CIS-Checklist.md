@@ -163,6 +163,8 @@
 | 4.1.1          | Ensure a single firewall configuration utility is in use  | Automated | All      | ☐      |
 | 4.2.1          | Ensure ufw is installed                                    | Automated | Debian   | ☐      |
 | 4.2.2          | Ensure iptables-persistent is not installed with ufw      | Automated | Debian   | ☐      |
+| 4.2.1          | Ensure firewalld drops unnecessary services and ports     | Manual    | RHEL     | ☐      |
+| 4.2.2          | Ensure firewalld loopback traffic is configured           | Automated | RHEL     | ☐      |
 | 4.2.3          | Ensure ufw service is enabled                              | Automated | Debian   | ☐      |
 | 4.2.4          | Ensure ufw loopback traffic is configured                  | Automated | Debian   | ☐      |
 | 4.2.5          | Ensure ufw outbound connections are configured             | Manual    | Debian   | ☐      |
@@ -226,7 +228,10 @@
 | 5.3.1.1        | Ensure latest version of pam is installed                 | Automated | All      | ☐      |
 | 5.3.1.2        | Ensure libpam-modules is installed                        | Automated | All      | ☐      |
 | 5.3.1.3        | Ensure libpam-pwquality is installed                      | Automated | All      | ☐      |
+| 5.3.1.2        | Ensure latest version of authselect is installed          | Automated | RHEL     | ☐      |
+| 5.3.1.3        | Ensure latest version of libpwquality is installed        | Automated | RHEL     | ☐      |
 | 5.3.2.1        | Ensure pam_unix module is enabled                         | Automated | All      | ☐      |
+| 5.3.2.1        | Ensure active authselect profile includes pam modules     | Automated | RHEL     | ☐      |
 | 5.3.2.2        | Ensure pam_faillock module is enabled                     | Automated | All      | ☐      |
 | 5.3.2.3        | Ensure pam_pwquality module is enabled                    | Automated | All      | ☐      |
 | 5.3.2.4        | Ensure pam_pwhistory module is enabled                    | Automated | All      | ☐      |
