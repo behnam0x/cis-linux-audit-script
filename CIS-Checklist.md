@@ -42,11 +42,16 @@
 | 1.1.2.7.4      | Ensure noexec option set on /var/log/audit partition      | Automated | All      | ☐      |
 | 1.2.1.1        | Ensure GPG keys are configured                            | Manual    | All      | ☐      |
 | 1.2.1.2        | Ensure package manager repositories are configured        | Manual    | All      | ☐      |
+| 1.2.1.3        | Ensure repo_gpgcheck is globally activated                | Manual    | RHEL     | ☐      |
 | 1.2.2.1        | Ensure updates, patches, and additional security software are installed | Manual | All | ☐      |
 | 1.3.1.1        | Ensure AppArmor is installed                              | Automated | Debian   | ☐      |
 | 1.3.1.2        | Ensure AppArmor is enabled in the bootloader configuration| Automated | Debian   | ☐      |
 | 1.3.1.3        | Ensure all AppArmor Profiles are in enforce or complain mode | Automated | Debian | ☐      |
 | 1.3.1.4        | Ensure all AppArmor Profiles are enforcing                | Automated | Debian   | ☐      |
+| 1.3.1.5        | Ensure the SELinux mode is enforcing                      | Automated | RHEL     | ☐      |
+| 1.3.1.6        | Ensure no unconfined services exist                       | Manual    | RHEL     | ☐      |
+| 1.3.1.7        | Ensure the MCS Translation Service (mcstrans) is not installed | Automated | RHEL | ☐      |
+| 1.3.1.8        | Ensure SETroubleshoot is not installed                    | Automated | RHEL     | ☐      |
 | 1.4.1          | Ensure bootloader password is set                         | Automated | All      | ☐      |
 | 1.4.2          | Ensure access to bootloader config is configured          | Automated | All      | ☐      |
 | 1.5.1          | Ensure address space layout randomization is enabled      | Automated | All      | ☐      |
@@ -56,6 +61,11 @@
 | 1.5.5          | Ensure Automatic Error Reporting is not enabled           | Automated | All      | ☐      |
 | 1.6.1          | Ensure message of the day is configured properly          | Automated | All      | ☐      |
 | 1.6.2          | Ensure local login warning banner is configured properly  | Automated | All      | ☐      |
+| 1.6.3          | Ensure system wide crypto policy disables sha1 hash and signature support | Automated | RHEL | ☐      |
+| 1.6.4          | Ensure system wide crypto policy disables macs less than 128 bits | Automated | RHEL | ☐      |
+| 1.6.5          | Ensure system wide crypto policy disables cbc for ssh     | Automated | RHEL     | ☐      |
+| 1.6.6          | Ensure system wide crypto policy disables chacha20-poly1305 for ssh | Manual | RHEL | ☐      |
+| 1.6.7          | Ensure system wide crypto policy disables EtM for ssh     | Manual    | RHEL     | ☐      |
 | 1.6.3          | Ensure remote login warning banner is configured properly | Automated | All      | ☐      |
 | 1.6.4          | Ensure access to /etc/motd is configured                  | Automated | All      | ☐      |
 | 1.6.5          | Ensure access to /etc/issue is configured                 | Automated | All      | ☐      |
@@ -91,6 +101,7 @@
 | 2.1.13         | Ensure rsync services are not in use                      | Automated | All      | ☐      |
 | 2.1.14         | Ensure samba file server services are not in use          | Automated | All      | ☐      |
 | 2.1.15         | Ensure snmp services are not in use                       | Automated | All      | ☐      |
+| 2.1.15         | Ensure telnet server services are not in use              | Automated | RHEL     | ☐      |
 | 2.1.16         | Ensure tftp server services are not in use                | Automated | All      | ☐      |
 | 2.1.17         | Ensure web proxy server services are not in use           | Automated | All      | ☐      |
 | 2.1.18         | Ensure web server services are not in use                 | Automated | All      | ☐      |
@@ -103,6 +114,7 @@
 | 2.2.3          | Ensure talk client is not installed                       | Automated | All      | ☐      |
 | 2.2.4          | Ensure telnet client is not installed                     | Automated | All      | ☐      |
 | 2.2.5          | Ensure ldap client is not installed                       | Automated | All      | ☐      |
+| 2.2.5          | Ensure tftp client is not installed                       | Automated | RHEL     | ☐      |
 | 2.2.6          | Ensure ftp client is not installed                        | Automated | All      | ☐      |
 | 2.3.1.1        | Ensure a single time synchronization daemon is in use     | Automated | All      | ☐      |
 | 2.3.2.1        | Ensure systemd-timesyncd configured with authorized timeserver | Automated | All | ☐      |
@@ -110,6 +122,7 @@
 | 2.3.3.1        | Ensure chrony is configured with authorized timeserver    | Automated | All      | ☐      |
 | 2.3.3.2        | Ensure chrony is running as user _chrony                  | Automated | All      | ☐      |
 | 2.3.3.3        | Ensure chrony is enabled and running                      | Automated | All      | ☐      |
+| 2.3.3          | Ensure chrony is not run as the root user                 | Automated | RHEL     | ☐      |
 | 2.4.1.1        | Ensure cron daemon is enabled and active                  | Automated | All      | ☐      |
 | 2.4.1.2        | Ensure permissions on /etc/crontab are configured         | Automated | All      | ☐      |
 | 2.4.1.3        | Ensure permissions on /etc/cron.hourly are configured     | Automated | All      | ☐      |
