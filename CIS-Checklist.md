@@ -252,3 +252,98 @@
 | 5.4.3.1        | Ensure nologin is not listed in /etc/shells               | Automated | All      | ☐      |
 | 5.4.3.2        | Ensure default user shell timeout is configured           | Automated | All      | ☐      |
 | 5.4.3.3        | Ensure default user umask is configured                   | Automated | All      | ☐      |
+
+## 📝 Section 6: Logging and Auditing
+
+| Control ID     | Description                                               | Type      | Platform | Status |
+|----------------|-----------------------------------------------------------|-----------|----------|--------|
+| 6.1.1.1        | Ensure journald service is enabled and active             | Automated | All      | ☐      |
+| 6.1.1.2        | Ensure journald log file access is configured             | Manual    | All      | ☐      |
+| 6.1.1.3        | Ensure journald log file rotation is configured           | Manual    | All      | ☐      |
+| 6.1.1.4        | Ensure only one logging system is in use                  | Automated | All      | ☐      |
+| 6.1.2.1.1      | Ensure systemd-journal-remote is installed                | Automated | All      | ☐      |
+| 6.1.2.1.2      | Ensure systemd-journal-upload authentication is configured| Manual    | All      | ☐      |
+| 6.1.2.1.3      | Ensure systemd-journal-upload is enabled and active       | Automated | All      | ☐      |
+| 6.1.2.1.4      | Ensure systemd-journal-remote service is not in use       | Automated | All      | ☐      |
+| 6.1.2.2        | Ensure journald ForwardToSyslog is disabled               | Automated | All      | ☐      |
+| 6.1.2.3        | Ensure journald Compress is configured                    | Automated | All      | ☐      |
+| 6.1.2.4        | Ensure journald Storage is configured                     | Automated | All      | ☐      |
+| 6.1.3.1        | Ensure rsyslog is installed                               | Automated | All      | ☐      |
+| 6.1.3.2        | Ensure rsyslog service is enabled and active              | Automated | All      | ☐      |
+| 6.1.3.3        | Ensure journald is configured to send logs to rsyslog     | Automated | All      | ☐      |
+| 6.1.3.4        | Ensure rsyslog log file creation mode is configured       | Automated | All      | ☐      |
+| 6.1.3.5        | Ensure rsyslog logging is configured                      | Manual    | All      | ☐      |
+| 6.1.3.6        | Ensure rsyslog is configured to send logs to a remote host| Manual    | All      | ☐      |
+| 6.1.3.7        | Ensure rsyslog is not configured to receive logs from a remote client | Automated | All | ☐      |
+| 6.1.3.8        | Ensure logrotate is configured                            | Manual    | All      | ☐      |
+| 6.1.4.1        | Ensure access to all logfiles has been configured         | Automated | All      | ☐      |
+| 6.2.1.1        | Ensure auditd packages are installed                      | Automated | All      | ☐      |
+| 6.2.1.2        | Ensure auditd service is enabled and active               | Automated | All      | ☐      |
+| 6.2.1.3        | Ensure auditing for processes that start prior to auditd is enabled | Automated | All | ☐      |
+| 6.2.1.4        | Ensure audit_backlog_limit is sufficient                  | Automated | All      | ☐      |
+| 6.2.2.1        | Ensure audit log storage size is configured               | Automated | All      | ☐      |
+| 6.2.2.2        | Ensure audit logs are not automatically deleted           | Automated | All      | ☐      |
+| 6.2.2.3        | Ensure system is disabled when audit logs are full        | Automated | All      | ☐      |
+| 6.2.2.4        | Ensure system warns when audit logs are low on space      | Automated | All      | ☐      |
+| 6.2.3.1        | Ensure changes to sudoers are collected                   | Automated | All      | ☐      |
+| 6.2.3.2        | Ensure actions as another user are always logged          | Automated | All      | ☐      |
+| 6.2.3.3        | Ensure events that modify the sudo log file are collected | Automated | All      | ☐      |
+| 6.2.3.4        | Ensure events that modify date and time information are collected | Automated | All | ☐      |
+| 6.2.3.5        | Ensure events that modify the system's network environment are collected | Automated | All | ☐      |
+| 6.2.3.6        | Ensure use of privileged commands are collected           | Automated | All      | ☐      |
+| 6.2.3.7        | Ensure unsuccessful file access attempts are collected    | Automated | All      | ☐      |
+| 6.2.3.8        | Ensure events that modify user/group information are collected | Automated | All | ☐      |
+| 6.2.3.9        | Ensure DAC permission modification events are collected   | Automated | All      | ☐      |
+| 6.2.3.10       | Ensure successful file system mounts are collected        | Automated | All      | ☐      |
+| 6.2.3.11       | Ensure session initiation information is collected        | Automated | All      | ☐      |
+| 6.2.3.12       | Ensure login and logout events are collected              | Automated | All      | ☐      |
+| 6.2.3.13       | Ensure file deletion events by users are collected        | Automated | All      | ☐      |
+| 6.2.3.14       | Ensure MAC modification events are collected              | Automated | All      | ☐      |
+| 6.2.3.15       | Ensure chcon command attempts are collected               | Automated | All      | ☐      |
+| 6.2.3.16       | Ensure setfacl command attempts are collected             | Automated | All      | ☐      |
+| 6.2.3.17       | Ensure chacl command attempts are collected               | Automated | All      | ☐      |
+| 6.2.3.18       | Ensure usermod command attempts are collected             | Automated | All      | ☐      |
+| 6.2.3.19       | Ensure kernel module loading/unloading/modification is collected | Automated | All | ☐      |
+| 6.2.3.20       | Ensure the audit configuration is immutable               | Automated | All      | ☐      |
+| 6.2.3.21       | Ensure running and on-disk audit configuration matches    | Manual    | All      | ☐      |
+| 6.2.4.1        | Ensure audit log files mode is configured                 | Automated | All      | ☐      |
+| 6.2.4.2        | Ensure audit log files owner is configured                | Automated | All      | ☐      |
+| 6.2.4.3        | Ensure audit log files group owner is configured          | Automated | All      | ☐      |
+| 6.2.4.4        | Ensure audit log directory mode is configured             | Automated | All      | ☐      |
+| 6.2.4.5        | Ensure audit config files mode is configured              | Automated | All      | ☐      |
+| 6.2.4.6        | Ensure audit config files owner is configured             | Automated | All      | ☐      |
+| 6.2.4.7        | Ensure audit config files group owner is configured       | Automated | All      | ☐      |
+| 6.2.4.8        | Ensure audit tools mode is configured                     | Automated | All      | ☐      |
+| 6.2.4.9        | Ensure audit tools owner is configured                    | Automated | All      | ☐      |
+| 6.2.4.10       | Ensure audit tools group owner is configured              | Automated | All      | ☐      |
+| 6.3.1          | Ensure AIDE is installed                                  | Automated | All      | ☐      |
+| 6.3.2          | Ensure filesystem integrity is regularly checked          | Automated | All      | ☐      |
+| 6.3.3          | Ensure cryptographic mechanisms protect audit tool integrity | Automated | All   | ☐      |
+
+## 🛠️ Section 7: System Maintenance
+
+| Control ID     | Description                                               | Type      | Platform | Status |
+|----------------|-----------------------------------------------------------|-----------|----------|--------|
+| 7.1.1          | Ensure permissions on /etc/passwd are configured          | Automated | All      | ☐      |
+| 7.1.2          | Ensure permissions on /etc/passwd- are configured         | Automated | All      | ☐      |
+| 7.1.3          | Ensure permissions on /etc/group are configured           | Automated | All      | ☐      |
+| 7.1.4          | Ensure permissions on /etc/group- are configured          | Automated | All      | ☐      |
+| 7.1.5          | Ensure permissions on /etc/shadow are configured          | Automated | All      | ☐      |
+| 7.1.6          | Ensure permissions on /etc/shadow- are configured         | Automated | All      | ☐      |
+| 7.1.7          | Ensure permissions on /etc/gshadow are configured         | Automated | All      | ☐      |
+| 7.1.8          | Ensure permissions on /etc/gshadow- are configured        | Automated | All      | ☐      |
+| 7.1.9          | Ensure permissions on /etc/shells are configured          | Automated | All      | ☐      |
+| 7.1.10         | Ensure permissions on /etc/security/opasswd are configured| Automated | All      | ☐      |
+| 7.1.11         | Ensure world writable files and directories are secured   | Automated | All      | ☐      |
+| 7.1.12         | Ensure no files or directories without an owner and a group exist | Automated | All | ☐      |
+| 7.1.13         | Ensure SUID and SGID files are reviewed                   | Manual    | All      | ☐      |
+| 7.2.1          | Ensure accounts in /etc/passwd use shadowed passwords     | Automated | All      | ☐      |
+| 7.2.2          | Ensure /etc/shadow password fields are not empty          | Automated | All      | ☐      |
+| 7.2.3          | Ensure all groups in /etc/passwd exist in /etc/group      | Automated | All      | ☐      |
+| 7.2.4          | Ensure shadow group is empty                              | Automated | All      | ☐      |
+| 7.2.5          | Ensure no duplicate UIDs exist                            | Automated | All      | ☐      |
+| 7.2.6          | Ensure no duplicate GIDs exist                            | Automated | All      | ☐      |
+| 7.2.7          | Ensure no duplicate user names exist                      | Automated | All      | ☐      |
+| 7.2.8          | Ensure no duplicate group names exist                     | Automated | All      | ☐      |
+| 7.2.9          | Ensure local interactive user home directories are configured | Automated | All  | ☐      |
+| 7.2.10         | Ensure local interactive user dot files access is configured | Automated | All   | ☐      |
