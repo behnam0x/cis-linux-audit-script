@@ -51,13 +51,14 @@ check_item() {
 check_package_installed() {
   local package="$1"
   if [ "$OS_FAMILY" = "debian" ]; then
-    dpkg -l | grep -q "$package"
+    dpkg -l "$package" 2>/dev/null | grep -q '^ii'
   elif [ "$OS_FAMILY" = "rhel" ]; then
     rpm -q "$package" &>/dev/null
   else
     return 1
   fi
 }
+
 
 if [ "$OS_FAMILY" = "debian" ]; then
   PAM_PASSWORD_FILE="/etc/pam.d/common-password"
@@ -402,9 +403,9 @@ check_item "2.4.1.4 /etc/cron.daily = 755" "[ -d /etc/cron.daily ] && [ $(stat -
 check_item "2.4.1.5 /etc/cron.weekly = 755" "[ -d /etc/cron.weekly ] && [ $(stat -c '%a' /etc/cron.weekly) -eq 755 ]"
 check_item "2.4.1.6 /etc/cron.monthly = 755" "[ -d /etc/cron.monthly ] && [ $(stat -c '%a' /etc/cron.monthly) -eq 755 ]"
 check_item "2.4.1.7 /etc/cron.d = 755" "[ -d /etc/cron.d ] && [ $(stat -c '%a' /etc/cron.d) -eq 755 ]"
-check_item "2.4.1.8 /etc/cron.allow exists" "[ -f /etc/cron.allow ]"
+check_item "2.4.1.8 /etc/cron.allow exists" "[ -f /etc/cron.allow ] && [ $(stat -c '%a' /etc/cron.allow) -eq 600 ]  "
 check_item "2.4.1.9 /etc/cron.deny removed" "[ ! -f /etc/cron.deny ]"
-check_item "2.4.2.1 /etc/at.allow exists" "[ -f /etc/at.allow ]"
+check_item "2.4.2.1 /etc/at.allow exists" "[ -f /etc/at.allow ] && [ $(stat -c '%a' /etc/at.allow) -eq 600 ]"
 check_item "2.4.2.2 /etc/at.deny removed" "[ ! -f /etc/at.deny ]"
 
 
@@ -697,7 +698,7 @@ check_item "5.3.6.4 pam_unix use_authtok" "grep -q 'use_authtok' $PAM_PASSWORD_F
 # === SECTION 5.4: User Accounts and Environment ===
 start_section "5.4 - User Accounts and Environment"
 
-check_item "5.4.1 PASS_MAX_DAYS ≤ 365" "awk '/^PASS_MAX_DAYS/ {exit \$2 <= 365 ? 0 : 1}' /etc/login.defs"
+check_item "5.4.1 PASS_MAX_DAYS ≤ 365" "awk '/^PASS_MAX_DAYS/ {exit \$2 <= 180 ? 0 : 1}' /etc/login.defs"
 check_item "5.4.2 PASS_WARN_AGE ≥ 7" "awk '/^PASS_WARN_AGE/ {exit \$2 >= 7 ? 0 : 1}' /etc/login.defs"
 check_item "5.4.3 ENCRYPT_METHOD SHA512 configured" "grep -q '^ENCRYPT_METHOD[[:space:]]\\+SHA512' /etc/login.defs"
 check_item "5.4.4 INACTIVE configured in useradd" "grep -q '^INACTIVE=' /etc/default/useradd"
