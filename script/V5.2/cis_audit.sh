@@ -474,6 +474,9 @@ section_2_3() {
   section_header "2.3" "Configure Time Synchronization"
 
   local chrony_ok=false; local timesyncd_ok=false
+  # RHEL keeps chrony.conf in /etc, Debian/Ubuntu in /etc/chrony/
+  local CHRONY_CONF=/etc/chrony.conf
+  [ "$OS_FAMILY" = "debian" ] && CHRONY_CONF=/etc/chrony/chrony.conf
   systemctl is-active chronyd &>/dev/null && chrony_ok=true
   systemctl is-active systemd-timesyncd &>/dev/null && timesyncd_ok=true
 
@@ -482,11 +485,11 @@ section_2_3() {
 
   if $chrony_ok; then
     check "2.3.2" "Ensure chrony is configured" \
-      "grep -q '^server ' /etc/chrony/chrony.conf 2>/dev/null" \
-      "grep '^server' /etc/chrony/chrony.conf 2>/dev/null || echo 'no server configured'"
+      "grep -q '^server ' $CHRONY_CONF 2>/dev/null" \
+      "grep '^server' $CHRONY_CONF 2>/dev/null || echo 'no server configured in $CHRONY_CONF'"
     check "2.3.3" "Ensure chrony is not run as the root user" \
-      "grep -q '^user _chrony' /etc/chrony/chrony.conf 2>/dev/null || grep -q '^user chrony' /etc/chrony/chrony.conf 2>/dev/null" \
-      "grep '^user' /etc/chrony/chrony.conf 2>/dev/null || echo 'user not set (expected: _chrony or chrony)'"
+      "grep -Eq '^user _?chrony' $CHRONY_CONF 2>/dev/null || ps -o user= -C chronyd 2>/dev/null | grep -Eq '^_?chrony$'" \
+      "grep '^user' $CHRONY_CONF 2>/dev/null || echo 'user not set in $CHRONY_CONF and chronyd is not running as chrony'"
   fi
 }
 
