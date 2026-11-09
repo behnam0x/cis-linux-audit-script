@@ -269,7 +269,7 @@ section_1_3() {
     check "1.3.1.2" "Ensure SELinux is not disabled in bootloader configuration" \
       "! grep -q 'selinux=0' /etc/default/grub 2>/dev/null && ! grep -q 'enforcing=0' /etc/default/grub 2>/dev/null"
     check "1.3.1.3" "Ensure SELinux policy is configured" \
-      "sestatus 2>/dev/null | grep -q 'Policy name:'"
+      "sestatus 2>/dev/null | grep -qi 'policy name:'"
     check "1.3.1.4" "Ensure the SELinux mode is not disabled" \
       "sestatus 2>/dev/null | grep -qv 'disabled'"
     check "1.3.1.5" "Ensure the SELinux mode is enforcing" \
